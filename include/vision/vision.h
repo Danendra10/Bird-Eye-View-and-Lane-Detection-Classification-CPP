@@ -1,4 +1,5 @@
 #include "opencv2/opencv.hpp"
+#include "fstream"
 
 using namespace std;
 using namespace cv;
@@ -269,10 +270,29 @@ void LaneDetect(Mat &frame_src, Mat &frame_dst, vector<LaneStruct> &lanes)
 
 void ClassifyLane(vector<LaneStruct> &lanes)
 {
+    LaneClass lane_class = LEFT_LANE;
+
+    float dist_to_left_lane = FLT_MAX;
+    float dist_to_middle_lane = FLT_MAX;
+    float dist_to_right_lane = FLT_MAX;
+
+    if (lanes.empty())
+    {
+        cout << "No lanes detected." << endl;
+        return;
+    }
+    ofstream myfile;
+    myfile.open("../lane.txt");
     for (int i = 0; i < lanes.size(); i++)
     {
-        printf("Lane %d %d \n", lanes[i].lane_point.x, lanes[i].lane_point.y);
+        float slope = (lanes[i].lane_point.y - lanes[i - 1].lane_point.y) / (lanes[i].lane_point.x - lanes[i - 1].lane_point.x);
+        float distance = sqrt(pow(lanes[i].lane_point.x - lanes[i - 1].lane_point.x, 2) + pow(lanes[i].lane_point.y - lanes[i - 1].lane_point.y, 2));
+
+        myfile << "slope: " << slope << " distance: " << distance << " X: " << lanes[i].lane_point.x << " Y: " << lanes[i].lane_point.y << " X prev: " << lanes[i - 1].lane_point.x << " Y prev: " << lanes[i - 1].lane_point.y << endl;
+
+        printf("slope: %f distance: %f X: %d Y: %d X prev: %d Y prev: %d\n", slope, distance, lanes[i].lane_point.x, lanes[i].lane_point.y, lanes[i - 1].lane_point.x, lanes[i - 1].lane_point.y);
     }
+    myfile.close();
 }
 
 void LaneDetect2(Mat &frame_src, Mat &frame_dst, vector<LaneStruct> &lanes)

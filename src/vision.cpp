@@ -55,10 +55,12 @@ int main()
         LaneDetect(line_hls, line_bgr, Lanes);
         ClassifyLane(Lanes);
 
-        for (int i = 0; i < Lanes.size(); i++)
-        {
-            circle(line_bgr, Lanes[i].lane_point, 3, Scalar(0, 0, 255), -1);
-        }
+        // for (int i = 0; i < Lanes.size(); i++)
+        // {
+        //     circle(line_bgr, Lanes[i].lane_point, 3, Scalar(0, 0, 255), -1);
+        // }
+        circle(line_bgr, Point(581, 584), 3, Scalar(0, 0, 255), -1);
+        circle(line_bgr, Point(582, 378), 3, Scalar(0, 255, 255), -1);
         imshow("Remapped", line_bgr);
         // imshow("HLS", line_hls);
 
