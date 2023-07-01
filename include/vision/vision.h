@@ -1,6 +1,11 @@
 #include "opencv2/opencv.hpp"
 #include "fstream"
 
+#include <Eigen/Dense>
+#include <numeric>
+
+using namespace Eigen;
+
 using namespace std;
 using namespace cv;
 
@@ -529,6 +534,77 @@ void LaneDetect2(Mat &frame_src, Mat &frame_dst, vector<LaneStruct> &lanes)
 //     }
 // }
 
+VectorXd polyfit(const VectorXd &x, const VectorXd &y, int degree)
+{
+    MatrixXd A(x.size(), degree + 1);
+    VectorXd b = y;
+
+    for (int i = 0; i < x.size(); i++)
+    {
+        for (int j = 0; j <= degree; j++)
+        {
+            A(i, j) = pow(x(i), degree - j);
+        }
+    }
+
+    VectorXd coeffs = A.colPivHouseholderQr().solve(b);
+    return coeffs;
+}
+
+std::vector<Vec4i> makePoints(Mat img, float slope, float intercept)
+{
+    int y1 = img.rows;
+    int y2 = static_cast<int>(y1 * 3 / 5);
+    int x1 = static_cast<int>((y1 - intercept) / slope);
+    int x2 = static_cast<int>((y2 - intercept) / slope);
+    return {Vec4i(x1, y1, x2, y2)};
+}
+
+// average slope intercept
+vector<vector<Vec4i>> AverageSlopeIntercept(Mat img, std::vector<Vec4i> &lines)
+{
+    std::vector<Vec2f> left_fit, right_fit;
+
+    // use polyfit to fit a line to the points
+    VectorXd x(lines.size());
+    VectorXd y(lines.size());
+
+    for (int i = 0; i < lines.size(); i++)
+    {
+        x(i) = lines[i][0];
+        y(i) = lines[i][1];
+    }
+
+    VectorXd coeffs = polyfit(x, y, 1);
+
+    cout << "coeffs: " << coeffs << endl;
+    float slope = coeffs[0];
+    float intercept = coeffs[1];
+    Vec2f left_fit_average = Vec2f(0, 0);
+    Vec2f right_fit_average = Vec2f(0, 0);
+    if (!left_fit.empty())
+        left_fit_average = std::accumulate(left_fit.begin(), left_fit.end(), Vec2f(0, 0)) / static_cast<float>(left_fit.size());
+    if (!right_fit.empty())
+        right_fit_average = std::accumulate(right_fit.begin(), right_fit.end(), Vec2f(0, 0)) / static_cast<float>(right_fit.size());
+
+    vector<Vec4i> left_line = makePoints(img, left_fit_average[0], left_fit_average[1]);
+    vector<Vec4i> right_line = makePoints(img, right_fit_average[0], right_fit_average[1]);
+    vector<vector<Vec4i>> lines_to_draw = {left_line, right_line};
+    return lines_to_draw;
+}
+
+void DisplayLine(Mat *img_dst, vector<vector<Vec4i>> lines)
+{
+    for (int i = 0; i < lines.size(); i++)
+    {
+        for (int j = 0; j < lines[i].size(); j++)
+        {
+            Vec4i l = lines[i][j];
+            line(*img_dst, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255), 3, LINE_AA);
+        }
+    }
+}
+
 void LaneDetectHough(Mat &frame_src, Mat &frame_dst, vector<Vec4i> &lines)
 {
     // Convert the image to grayscale
@@ -542,7 +618,7 @@ void LaneDetectHough(Mat &frame_src, Mat &frame_dst, vector<Vec4i> &lines)
     imshow("blurred", blurred);
 
     Mat edges;
-    Canny(blurred, edges, 50, 150);
+    Canny(blurred, edges, 10, 100);
 
     // Create a mask to exclude specific regions
     Mat mask = Mat::zeros(edges.size(), CV_8UC1);
@@ -563,7 +639,11 @@ void LaneDetectHough(Mat &frame_src, Mat &frame_dst, vector<Vec4i> &lines)
 
     imshow("edges", edges);
 
-    HoughLinesP(edges, lines, 1, CV_PI / 180, 10, 10, 10);
+    HoughLinesP(edges, lines, 1, CV_PI / 180, 5, 5, 5);
+
+    vector<vector<Vec4i>> avg_lines = AverageSlopeIntercept(frame_src, lines);
+
+    DisplayLine(&frame_src, avg_lines);
 
     // Create a copy of the source frame for drawing the detected lines
     frame_dst = frame_src.clone();

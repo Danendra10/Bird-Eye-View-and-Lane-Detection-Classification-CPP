@@ -7,7 +7,7 @@
                 "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include",
                 "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/**",
                 "/opt/homebrew/include/opencv4",
-                "src/FiRA-Autonomous-Cars-Simulator/**"
+                "/usr/local/include/eigen3"
             ],
             "defines": [],
             "macFrameworkPath": [

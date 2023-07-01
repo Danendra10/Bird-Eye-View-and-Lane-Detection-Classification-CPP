@@ -67,49 +67,7 @@ int main()
 
         vector<Vec4i> lines;
         LaneDetectHough(line_bgr, line_bgr, lines);
-
-        // draw the lines
-        for (size_t i = 0; i < lines.size(); i++)
-        {
-            // Extract the line endpoints
-            Vec4i l = lines[i];
-            Point pt1(l[0], l[1]);
-            Point pt2(l[2], l[3]);
-
-            // Check if the line endpoints fall within the specified regions to ignore
-            // Check if the line endpoints fall within the specified regions to ignore
-            if ((pt1.x >= 4 && pt1.x <= 296 && pt1.y >= 440 && pt1.y <= 795) ||
-                (pt2.x >= 4 && pt2.x <= 296 && pt2.y >= 440 && pt2.y <= 795) ||
-                (pt1.x == 0 && pt1.y == 800) || (pt2.x == 0 && pt2.y == 800))
-            {
-                continue; // Ignore this line
-            }
-            if ((pt1.x == 795 && pt1.y == 442) || (pt2.x == 795 && pt2.y == 442))
-            {
-                // Handle (795, 442) separately
-                // ... Add your custom logic for this case ...
-                continue; // Ignore this line
-            }
-            if ((pt1.x == 506 && pt1.y == 795) || (pt2.x == 506 && pt2.y == 795))
-            {
-                // Handle (506, 795) separately
-                // ... Add your custom logic for this case ...
-                continue; // Ignore this line
-            }
-            if ((pt1.x == 800 && pt1.y == 800) || (pt2.x == 800 && pt2.y == 800))
-            {
-                // Handle (800, 800) separately
-                // ... Add your custom logic for this case ...
-                continue; // Ignore this line
-            }
-
-            line(line_bgr, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255), 1, LINE_AA);
-        }
-
-        // click event put text to line_bgr
-
         imshow("Remapped", line_bgr);
-        setMouseCallback("Remapped", CallBackFunc, NULL);
 
         char c = (char)waitKey(25);
         if (c == 27)

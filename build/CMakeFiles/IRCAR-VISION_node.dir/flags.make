@@ -4,7 +4,7 @@
 # compile CXX with /Library/Developer/CommandLineTools/usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/include -isystem /opt/homebrew/Cellar/opencv/4.7.0_6/include/opencv4
+CXX_INCLUDES = -I/Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/include -I/opt/homebrew/include/eigen3 -isystem /opt/homebrew/Cellar/opencv/4.7.0_6/include/opencv4
 
 CXX_FLAGSarm64 =  -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -std=gnu++11
 
