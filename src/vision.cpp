@@ -1,4 +1,5 @@
 #include "vision/vision.h"
+#include "vision/LaneClassification.h"
 
 int main()
 {
@@ -40,7 +41,6 @@ int main()
         InversePerspective(DST_REMAPPED_WIDTH, DST_REMAPPED_HEIGHT, frame_gray_resize.data, maptable, frame_remapped.data);
         line(raw_frame, Point(cam_params.image_width >> 1, 0), Point(cam_params.image_width >> 1, cam_params.image_height), Scalar(0, 0, 255), 1);
         line(raw_frame, Point(0, cam_params.image_height >> 1), Point(cam_params.image_width, cam_params.image_height >> 1), Scalar(0, 0, 255), 1);
-        // vector<vector<Point>> lines;
 
         Mat line_bgr;
         cvtColor(frame_remapped, line_bgr, COLOR_GRAY2BGR);
@@ -66,14 +66,31 @@ int main()
         // imshow("HLS", line_hls);
 
         vector<Vec4i> lines;
+        vector<Lane> lanes;
         LaneDetectHough(line_bgr, line_bgr, lines);
 
         for (size_t i = 0; i < lines.size(); i++)
         {
             Vec4i l = lines[i];
-            line(line_bgr, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 255, 255), 3, LINE_AA);
+            line(line_bgr, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 255, 255), 3);
+        }
+
+        // ClassifyLanes(lines, lanes);
+        ClassifyLanes(line_hls, lines, lanes);
+
+        for (int i = 0; i < lanes.size(); i++)
+        {
+            // printf("lane %d: %d %d \n", i, lanes[i].lane_point.x, lanes[i].lane_point.y);
+
+            // if (lanes[i].lane_side == LEFT_LANE)
+            //     circle(line_bgr, lanes[i].lane_point, 5, Scalar(0, 0, 255), 2);
+            // else if (lanes[i].lane_side == RIGHT_LANE)
+            //     circle(line_bgr, lanes[i].lane_point, 5, Scalar(255, 0, 0), 2);
+            // else
+            circle(line_bgr, lanes[i].lane_point, 5, Scalar(0, 255, 0), 2);
         }
         imshow("Remapped", line_bgr);
+        // imshow("HLS", line_hls);
 
         char c = (char)waitKey(25);
         if (c == 27)

@@ -3,6 +3,7 @@
 
 #include <Eigen/Dense>
 #include <numeric>
+#include "NumCpp.hpp"
 
 using namespace Eigen;
 
@@ -28,7 +29,88 @@ int l_max = 255;
 int s_min = 0;
 int s_max = 255;
 
-string video_path = "../test.mp4";
+#define DEGREE 2
+
+class PolynomialRegression
+{
+public:
+    PolynomialRegression(int degree);
+    void fit(const vector<double> &x, const vector<double> &y);
+    double predict(double x);
+    void print();
+    vector<double> getW();
+
+private:
+    int degree;
+    vector<double> w;
+};
+
+PolynomialRegression::PolynomialRegression(int degree)
+{
+    this->degree = degree;
+    w = vector<double>(degree + 1, 0);
+}
+
+void PolynomialRegression::fit(const vector<double> &x, const vector<double> &y)
+{
+    int n = x.size();
+    Mat X = Mat::zeros(n, degree + 1, CV_64FC1);
+    Mat Y = Mat::zeros(n, 1, CV_64FC1);
+    Mat W = Mat::zeros(degree + 1, degree + 1, CV_64FC1);
+    Mat W_inv = Mat::zeros(degree + 1, degree + 1, CV_64FC1);
+    Mat W_inv_X = Mat::zeros(degree + 1, n, CV_64FC1);
+    Mat W_inv_X_Y = Mat::zeros(degree + 1, 1, CV_64FC1);
+
+    for (int i = 0; i < n; i++)
+    {
+        Y.at<double>(i, 0) = y[i];
+        for (int j = 0; j < degree + 1; j++)
+        {
+            X.at<double>(i, j) = pow(x[i], j);
+        }
+    }
+
+    W = X.t() * X;
+    W_inv = W.inv();
+    W_inv_X = W_inv * X.t();
+    W_inv_X_Y = W_inv_X * Y;
+
+    for (int i = 0; i < degree + 1; i++)
+    {
+        w[i] = W_inv_X_Y.at<double>(i, 0);
+    }
+}
+
+double PolynomialRegression::predict(double x)
+{
+    double y = 0;
+    for (int i = 0; i < degree + 1; i++)
+    {
+        y += w[i] * pow(x, i);
+    }
+    return y;
+}
+
+void PolynomialRegression::print()
+{
+    cout << "y = ";
+    for (int i = degree; i >= 0; i--)
+    {
+        cout << w[i] << "x^" << i;
+        if (i != 0)
+            cout << " + ";
+    }
+    cout << endl;
+}
+
+vector<double> PolynomialRegression::getW()
+{
+    return w;
+}
+
+PolynomialRegression polynom(DEGREE);
+
+string video_path = "../test2.mp4";
 
 int *maptable = new int[SRC_RESIZED_WIDTH * SRC_RESIZED_HEIGHT];
 
@@ -230,242 +312,242 @@ void ScanLines(vector<Point> &dst, Mat &frame_src);
 //     current_lane_points.clear();
 // }
 
-enum LaneClass
-{
-    LEFT_LANE,
-    MIDDLE_LANE,
-    RIGHT_LANE
-};
+// enum LaneClass
+// {
+//     LEFT_LANE,
+//     MIDDLE_LANE,
+//     RIGHT_LANE
+// };
 
-struct LaneStruct
-{
-    Point lane_point;
-    LaneClass classified_as;
-    uint16_t closest_point_index;
-};
+// struct LaneStruct
+// {
+//     Point lane_point;
+//     LaneClass classified_as;
+//     uint16_t closest_point_index;
+// };
 
-vector<LaneStruct> Lanes;
+// vector<LaneStruct> Lanes;
 
-void LaneDetect(Mat &frame_src, Mat &frame_dst, vector<LaneStruct> &lanes)
-{
-    static int prev_left_lane_pos_x = 0;
-    static int prev_left_lane_pos_y = 0;
-    static int prev_middle_lane_pos_x = 0;
-    static int prev_middle_lane_pos_y = 0;
-    static int prev_right_lane_pos_x = 0;
-    static int prev_right_lane_pos_y = 0;
+// void LaneDetect(Mat &frame_src, Mat &frame_dst, vector<LaneStruct> &lanes)
+// {
+//     static int prev_left_lane_pos_x = 0;
+//     static int prev_left_lane_pos_y = 0;
+//     static int prev_middle_lane_pos_x = 0;
+//     static int prev_middle_lane_pos_y = 0;
+//     static int prev_right_lane_pos_x = 0;
+//     static int prev_right_lane_pos_y = 0;
 
-    lanes.clear();
+//     lanes.clear();
 
-    vector<Point> curr_lane;
-    for (int x = 0; x < frame_src.cols; x++)
-    {
-        for (int y = 200; y < frame_src.rows - 50; y++)
-        {
-            LaneStruct lane;
-            if (frame_src.at<uchar>(y, x) == 255)
-            {
-                lane.lane_point.x = x;
-                lane.lane_point.y = y;
-                lanes.push_back(lane);
-            }
-        }
-    }
-}
+//     vector<Point> curr_lane;
+//     for (int x = 0; x < frame_src.cols; x++)
+//     {
+//         for (int y = 200; y < frame_src.rows - 50; y++)
+//         {
+//             LaneStruct lane;
+//             if (frame_src.at<uchar>(y, x) == 255)
+//             {
+//                 lane.lane_point.x = x;
+//                 lane.lane_point.y = y;
+//                 lanes.push_back(lane);
+//             }
+//         }
+//     }
+// }
 
-bool DetectPointIsCloseToAnotherPoint(Point &point_1, Point &point_2, float threshold)
-{
-    float distance = sqrt(pow(point_1.x - point_2.x, 2) + pow(point_1.y - point_2.y, 2));
-    if (distance < threshold)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
+// bool DetectPointIsCloseToAnotherPoint(Point &point_1, Point &point_2, float threshold)
+// {
+//     float distance = sqrt(pow(point_1.x - point_2.x, 2) + pow(point_1.y - point_2.y, 2));
+//     if (distance < threshold)
+//     {
+//         return true;
+//     }
+//     else
+//     {
+//         return false;
+//     }
+// }
 
-void FillPolyFromPoints(Mat &frame, vector<LaneStruct> &points)
-{
-    vector<Point> poly_points;
-    for (int i = 0; i < points.size(); i++)
-    {
-        poly_points.push_back(points[i].lane_point);
-    }
-    fillConvexPoly(frame, poly_points, Scalar(255, 255, 255));
-}
+// void FillPolyFromPoints(Mat &frame, vector<LaneStruct> &points)
+// {
+//     vector<Point> poly_points;
+//     for (int i = 0; i < points.size(); i++)
+//     {
+//         poly_points.push_back(points[i].lane_point);
+//     }
+//     fillConvexPoly(frame, poly_points, Scalar(255, 255, 255));
+// }
 
-void FillPolyFromMatrix(Mat &frame_in, Mat &frame_out)
-{
-    vector<vector<Point>> contours;
-    vector<Vec4i> hierarchy;
-    findContours(frame_in, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
-    drawContours(frame_out, contours, -1, Scalar(255, 255, 255), FILLED, 8, hierarchy);
-}
+// void FillPolyFromMatrix(Mat &frame_in, Mat &frame_out)
+// {
+//     vector<vector<Point>> contours;
+//     vector<Vec4i> hierarchy;
+//     findContours(frame_in, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
+//     drawContours(frame_out, contours, -1, Scalar(255, 255, 255), FILLED, 8, hierarchy);
+// }
 
-void ClassifyLane(vector<LaneStruct> &lanes)
-{
-    static LaneClass lane_class = LEFT_LANE;
-    static LaneClass prev_lane_class = MIDDLE_LANE;
+// void ClassifyLane(vector<LaneStruct> &lanes)
+// {
+//     static LaneClass lane_class = LEFT_LANE;
+//     static LaneClass prev_lane_class = MIDDLE_LANE;
 
-    float dist_to_left_lane = FLT_MAX;
-    float dist_to_middle_lane = FLT_MAX;
-    float dist_to_right_lane = FLT_MAX;
-    static uint8_t state_change_lane = 0;
+//     float dist_to_left_lane = FLT_MAX;
+//     float dist_to_middle_lane = FLT_MAX;
+//     float dist_to_right_lane = FLT_MAX;
+//     static uint8_t state_change_lane = 0;
 
-    if (lanes.empty())
-    {
-        cout << "No lanes detected." << endl;
-        return;
-    }
-    // ofstream myfile;
-    // myfile.open("../lane.txt");
-    lanes[0].classified_as = lane_class;
-    for (int i = 1; i < lanes.size(); i++)
-    {
-        bool is_close_to_another_point = DetectPointIsCloseToAnotherPoint(lanes[i].lane_point, lanes[i - 1].lane_point, 10);
-        printf("is_close_to_another_point: %d\n", is_close_to_another_point);
-        if (is_close_to_another_point)
-        {
-            lanes[i].classified_as = lanes[i - 1].classified_as;
-        }
-        else
-        {
-            lanes[i].classified_as = MIDDLE_LANE;
-        }
-        // float slope = (lanes[i].lane_point.y - lanes[i - 1].lane_point.y) / (lanes[i].lane_point.x - lanes[i - 1].lane_point.x);
-        // float distance = sqrt(pow(lanes[i].lane_point.x - lanes[i - 1].lane_point.x, 2) + pow(lanes[i].lane_point.y - lanes[i - 1].lane_point.y, 2));
+//     if (lanes.empty())
+//     {
+//         cout << "No lanes detected." << endl;
+//         return;
+//     }
+//     // ofstream myfile;
+//     // myfile.open("../lane.txt");
+//     lanes[0].classified_as = lane_class;
+//     for (int i = 1; i < lanes.size(); i++)
+//     {
+//         bool is_close_to_another_point = DetectPointIsCloseToAnotherPoint(lanes[i].lane_point, lanes[i - 1].lane_point, 10);
+//         printf("is_close_to_another_point: %d\n", is_close_to_another_point);
+//         if (is_close_to_another_point)
+//         {
+//             lanes[i].classified_as = lanes[i - 1].classified_as;
+//         }
+//         else
+//         {
+//             lanes[i].classified_as = MIDDLE_LANE;
+//         }
+//         // float slope = (lanes[i].lane_point.y - lanes[i - 1].lane_point.y) / (lanes[i].lane_point.x - lanes[i - 1].lane_point.x);
+//         // float distance = sqrt(pow(lanes[i].lane_point.x - lanes[i - 1].lane_point.x, 2) + pow(lanes[i].lane_point.y - lanes[i - 1].lane_point.y, 2));
 
-        // // myfile << "slope: " << slope << " distance: " << distance << " X: " << lanes[i].lane_point.x << " Y: " << lanes[i].lane_point.y << " X prev: " << lanes[i - 1].lane_point.x << " Y prev: " << lanes[i - 1].lane_point.y << endl;
+//         // // myfile << "slope: " << slope << " distance: " << distance << " X: " << lanes[i].lane_point.x << " Y: " << lanes[i].lane_point.y << " X prev: " << lanes[i - 1].lane_point.x << " Y prev: " << lanes[i - 1].lane_point.y << endl;
 
-        // if (slope < -100 && distance > 120)
-        // {
-        //     state_change_lane = 1;
-        // }
+//         // if (slope < -100 && distance > 120)
+//         // {
+//         //     state_change_lane = 1;
+//         // }
 
-        // if (state_change_lane && lane_class == LEFT_LANE && prev_lane_class != LEFT_LANE)
-        // {
-        //     lane_class = MIDDLE_LANE;
-        //     prev_lane_class = LEFT_LANE;
-        //     state_change_lane = 0;
-        // }
+//         // if (state_change_lane && lane_class == LEFT_LANE && prev_lane_class != LEFT_LANE)
+//         // {
+//         //     lane_class = MIDDLE_LANE;
+//         //     prev_lane_class = LEFT_LANE;
+//         //     state_change_lane = 0;
+//         // }
 
-        // if (state_change_lane && lane_class == MIDDLE_LANE && prev_lane_class != MIDDLE_LANE)
-        // {
-        //     lane_class = LEFT_LANE;
-        //     prev_lane_class = MIDDLE_LANE;
-        //     state_change_lane = 0;
-        // }
-        // printf("State %d lane class %d\n", state_change_lane, lane_class);
+//         // if (state_change_lane && lane_class == MIDDLE_LANE && prev_lane_class != MIDDLE_LANE)
+//         // {
+//         //     lane_class = LEFT_LANE;
+//         //     prev_lane_class = MIDDLE_LANE;
+//         //     state_change_lane = 0;
+//         // }
+//         // printf("State %d lane class %d\n", state_change_lane, lane_class);
 
-        // lanes[i].classified_as = lane_class;
+//         // lanes[i].classified_as = lane_class;
 
-        // printf("slope: %f distance: %f X: %d Y: %d X prev: %d Y prev: %d\n", slope, distance, lanes[i].lane_point.x, lanes[i].lane_point.y, lanes[i - 1].lane_point.x, lanes[i - 1].lane_point.y);
-    }
-    // myfile.close();
-}
+//         // printf("slope: %f distance: %f X: %d Y: %d X prev: %d Y prev: %d\n", slope, distance, lanes[i].lane_point.x, lanes[i].lane_point.y, lanes[i - 1].lane_point.x, lanes[i - 1].lane_point.y);
+//     }
+//     // myfile.close();
+// }
 
-void LaneDetect2(Mat &frame_src, Mat &frame_dst, vector<LaneStruct> &lanes)
-{
-    static int prev_lane_pos_x = 0;
-    static int prev_lane_pos_y = 0;
-    static int prev_left_lane_pos_x = 0;
-    static int prev_left_lane_pos_y = 0;
-    static int prev_middle_lane_pos_x = 0;
-    static int prev_middle_lane_pos_y = 0;
-    static int min_lane_points_thresh = 100;
-    float lane_threshold_dist = 50.0f;
-    float lane_threshold_dist_max = 100.0f;
+// void LaneDetect2(Mat &frame_src, Mat &frame_dst, vector<LaneStruct> &lanes)
+// {
+//     static int prev_lane_pos_x = 0;
+//     static int prev_lane_pos_y = 0;
+//     static int prev_left_lane_pos_x = 0;
+//     static int prev_left_lane_pos_y = 0;
+//     static int prev_middle_lane_pos_x = 0;
+//     static int prev_middle_lane_pos_y = 0;
+//     static int min_lane_points_thresh = 100;
+//     float lane_threshold_dist = 50.0f;
+//     float lane_threshold_dist_max = 100.0f;
 
-    lanes.clear();
+//     lanes.clear();
 
-    vector<Point> current_lane_points;
-    for (int x = 0; x < frame_src.cols; x++)
-    {
-        int closest_point_index = -1;
-        float min_distance = FLT_MAX;
-        LaneStruct lane;
+//     vector<Point> current_lane_points;
+//     for (int x = 0; x < frame_src.cols; x++)
+//     {
+//         int closest_point_index = -1;
+//         float min_distance = FLT_MAX;
+//         LaneStruct lane;
 
-        for (int y = 0; y < frame_src.rows; y++)
-        {
-            if (y >= 750)
-                continue;
-            if (prev_lane_pos_x == 0 && prev_lane_pos_y == 0)
-            {
-                prev_lane_pos_x = x;
-                prev_lane_pos_y = y;
-            }
+//         for (int y = 0; y < frame_src.rows; y++)
+//         {
+//             if (y >= 750)
+//                 continue;
+//             if (prev_lane_pos_x == 0 && prev_lane_pos_y == 0)
+//             {
+//                 prev_lane_pos_x = x;
+//                 prev_lane_pos_y = y;
+//             }
 
-            if (frame_src.at<uchar>(y, x) == 255)
-            {
-                if (prev_lane_pos_x == x && prev_lane_pos_y == y)
-                    continue;
-                current_lane_points.push_back(Point(x, y));
+//             if (frame_src.at<uchar>(y, x) == 255)
+//             {
+//                 if (prev_lane_pos_x == x && prev_lane_pos_y == y)
+//                     continue;
+//                 current_lane_points.push_back(Point(x, y));
 
-                float distance = sqrt(pow(x - prev_lane_pos_x, 2) + pow(y - prev_lane_pos_y, 2));
+//                 float distance = sqrt(pow(x - prev_lane_pos_x, 2) + pow(y - prev_lane_pos_y, 2));
 
-                if (prev_lane_pos_x != x || prev_lane_pos_y != y)
-                {
-                    prev_lane_pos_x = x;
-                    prev_lane_pos_y = y;
-                }
-                if (prev_left_lane_pos_x == 0 && prev_left_lane_pos_y == 0)
-                {
-                    prev_left_lane_pos_x = x;
-                    prev_left_lane_pos_y = y;
-                }
-                if (prev_middle_lane_pos_x == 0 && prev_middle_lane_pos_y == 0)
-                {
-                    prev_middle_lane_pos_x = x;
-                    prev_middle_lane_pos_y = y;
-                }
+//                 if (prev_lane_pos_x != x || prev_lane_pos_y != y)
+//                 {
+//                     prev_lane_pos_x = x;
+//                     prev_lane_pos_y = y;
+//                 }
+//                 if (prev_left_lane_pos_x == 0 && prev_left_lane_pos_y == 0)
+//                 {
+//                     prev_left_lane_pos_x = x;
+//                     prev_left_lane_pos_y = y;
+//                 }
+//                 if (prev_middle_lane_pos_x == 0 && prev_middle_lane_pos_y == 0)
+//                 {
+//                     prev_middle_lane_pos_x = x;
+//                     prev_middle_lane_pos_y = y;
+//                 }
 
-                float dist_to_left_lane = sqrt(pow(x - prev_left_lane_pos_x, 2) + pow(y - prev_left_lane_pos_y, 2));
+//                 float dist_to_left_lane = sqrt(pow(x - prev_left_lane_pos_x, 2) + pow(y - prev_left_lane_pos_y, 2));
 
-                float dist_to_middle_lane = FLT_MAX;
-                if (prev_middle_lane_pos_x != prev_left_lane_pos_x || prev_middle_lane_pos_y != prev_left_lane_pos_y)
-                    dist_to_middle_lane = sqrt(pow(x - prev_middle_lane_pos_x, 2) + pow(y - prev_middle_lane_pos_y, 2));
+//                 float dist_to_middle_lane = FLT_MAX;
+//                 if (prev_middle_lane_pos_x != prev_left_lane_pos_x || prev_middle_lane_pos_y != prev_left_lane_pos_y)
+//                     dist_to_middle_lane = sqrt(pow(x - prev_middle_lane_pos_x, 2) + pow(y - prev_middle_lane_pos_y, 2));
 
-                printf("dist_to_left_lane: %f dist to mid %f prev_left_lane_pos: %d %d prev right %d %d\n", dist_to_left_lane, dist_to_middle_lane, prev_left_lane_pos_x, prev_left_lane_pos_y, prev_middle_lane_pos_x, prev_middle_lane_pos_y);
+//                 printf("dist_to_left_lane: %f dist to mid %f prev_left_lane_pos: %d %d prev right %d %d\n", dist_to_left_lane, dist_to_middle_lane, prev_left_lane_pos_x, prev_left_lane_pos_y, prev_middle_lane_pos_x, prev_middle_lane_pos_y);
 
-                if (dist_to_left_lane < lane_threshold_dist && dist_to_middle_lane > lane_threshold_dist_max)
-                {
-                    printf("left lane\n");
-                    lane.classified_as = LEFT_LANE;
-                }
-                else if (dist_to_middle_lane < lane_threshold_dist && dist_to_left_lane > lane_threshold_dist_max)
-                {
-                    printf("middle lane\n");
-                    lane.classified_as = MIDDLE_LANE;
-                }
-                else
-                {
-                    printf("right lane\n");
-                    lane.classified_as = RIGHT_LANE;
-                }
+//                 if (dist_to_left_lane < lane_threshold_dist && dist_to_middle_lane > lane_threshold_dist_max)
+//                 {
+//                     printf("left lane\n");
+//                     lane.classified_as = LEFT_LANE;
+//                 }
+//                 else if (dist_to_middle_lane < lane_threshold_dist && dist_to_left_lane > lane_threshold_dist_max)
+//                 {
+//                     printf("middle lane\n");
+//                     lane.classified_as = MIDDLE_LANE;
+//                 }
+//                 else
+//                 {
+//                     printf("right lane\n");
+//                     lane.classified_as = RIGHT_LANE;
+//                 }
 
-                lane.closest_point_index = current_lane_points.size() - 1;
-                lane.lane_point = current_lane_points[lane.closest_point_index];
-                lanes.push_back(lane);
+//                 lane.closest_point_index = current_lane_points.size() - 1;
+//                 lane.lane_point = current_lane_points[lane.closest_point_index];
+//                 lanes.push_back(lane);
 
-                if (lane.classified_as == LEFT_LANE && (prev_left_lane_pos_x != x || prev_left_lane_pos_y != y))
-                {
-                    printf("update left lane\n");
-                    prev_left_lane_pos_x = x;
-                    prev_left_lane_pos_y = y;
-                }
+//                 if (lane.classified_as == LEFT_LANE && (prev_left_lane_pos_x != x || prev_left_lane_pos_y != y))
+//                 {
+//                     printf("update left lane\n");
+//                     prev_left_lane_pos_x = x;
+//                     prev_left_lane_pos_y = y;
+//                 }
 
-                if (lane.classified_as == MIDDLE_LANE && (prev_middle_lane_pos_x != x || prev_middle_lane_pos_y != y))
-                {
-                    printf("update middle lane\n");
-                    prev_middle_lane_pos_x = x;
-                    prev_middle_lane_pos_y = y;
-                }
-            }
-        }
-    }
-}
+//                 if (lane.classified_as == MIDDLE_LANE && (prev_middle_lane_pos_x != x || prev_middle_lane_pos_y != y))
+//                 {
+//                     printf("update middle lane\n");
+//                     prev_middle_lane_pos_x = x;
+//                     prev_middle_lane_pos_y = y;
+//                 }
+//             }
+//         }
+//     }
+// }
 
 // void LaneDetect(Mat &frame_src, Mat &frame_dst, vector<LaneStruct> &lanes)
 // {
@@ -557,7 +639,22 @@ std::vector<Vec4i> makePoints(Mat img, float slope, float intercept)
     int y2 = static_cast<int>(y1 * 3 / 5);
     int x1 = static_cast<int>((y1 - intercept) / slope);
     int x2 = static_cast<int>((y2 - intercept) / slope);
+    // printf("x1: %d, y1: %d, x2: %d, y2: %d\n", x1, y1, x2, y2);
     return {Vec4i(x1, y1, x2, y2)};
+}
+
+Vec2f VectorAvg(vector<Vec2f> in_vec)
+{
+    float avg_x = 0;
+    float avg_y = 0;
+    for (int i = 0; i < in_vec.size(); i++)
+    {
+        avg_x += in_vec[i][0];
+        avg_y += in_vec[i][1];
+    }
+    avg_x /= in_vec.size();
+    avg_y /= in_vec.size();
+    return Vec2f(avg_x, avg_y);
 }
 
 // average slope intercept
@@ -568,8 +665,7 @@ vector<vector<Vec4i>> AverageSlopeIntercept(Mat img, vector<Vec4i> &lines)
     // Use polyfit to fit a line to the points
     VectorXd x(lines.size());
     VectorXd y(lines.size());
-
-    for (int i = 0; i < lines.size(); i++)
+    for (int i = lines.size(); i > 0; i--)
     {
         Vec4i line = lines[i];
         int x1 = line[0];
@@ -579,30 +675,42 @@ vector<vector<Vec4i>> AverageSlopeIntercept(Mat img, vector<Vec4i> &lines)
 
         printf("x1: %d, y1: %d, x2: %d, y2: %d\n", x1, y1, x2, y2);
 
-        VectorXd xs(2);
-        xs << x1, x2;
+        // poly fit
+        nc::NdArray<int> x = {x1, x2};
+        nc::NdArray<int> y = {y1, y2};
 
-        VectorXd ys(2);
-        ys << y1, y2;
+        // nc::NdArray<double> coeffs = nc::polynomial::polyfit(x, y, 1);
+        static nc::polynomial::Poly1d<double> poly = nc::polynomial::Poly1d<int>::fit(x, y, 1);
+        // get the coefficients
+        nc::NdArray<double> coeffs = poly.coefficients();
+        printf("Coeffs: %f, %f\n", coeffs[0], coeffs[1]);
 
-        VectorXd coeffs = polyfit(xs, ys, 1);
+        // VectorXd xs(2);
+        // xs << x1, x2;
 
-        float slope = coeffs[0];
-        float intercept = coeffs[1];
+        // VectorXd ys(2);
+        // ys << y1, y2;
 
-        if (slope < 0)
-            left_fit.push_back(Vec2f(slope, intercept));
-        else
-            right_fit.push_back(Vec2f(slope, intercept));
+        // // polyfit
+
+        // float slope = coeffs[0];
+        // float intercept = coeffs[1];
+
+        // printf("Slope %f Interception %f\n", slope, intercept);
+
+        // if (slope < 0)
+        //     left_fit.push_back(Vec2f(slope, intercept));
+        // else
+        //     right_fit.push_back(Vec2f(slope, intercept));
     }
 
-    Vec2f left_fit_average(0, 0);
-    Vec2f right_fit_average(0, 0);
-    if (!left_fit.empty())
-        left_fit_average = std::accumulate(left_fit.begin(), left_fit.end(), Vec2f(0, 0)) / static_cast<float>(left_fit.size());
-    if (!right_fit.empty())
-        right_fit_average = std::accumulate(right_fit.begin(), right_fit.end(), Vec2f(0, 0)) / static_cast<float>(right_fit.size());
+    Vec2f left_fit_average = VectorAvg(left_fit);
+    Vec2f right_fit_average = VectorAvg(right_fit);
 
+    // if (!left_fit.empty())
+    //     left_fit_average = std::accumulate(left_fit.begin(), left_fit.end(), Vec2f(0, 0)) / static_cast<float>(left_fit.size());
+    // if (!right_fit.empty())
+    //     right_fit_average = std::accumulate(right_fit.begin(), right_fit.end(), Vec2f(0, 0)) / static_cast<float>(right_fit.size());
     vector<Vec4i> left_line = makePoints(img, left_fit_average[0], left_fit_average[1]);
     vector<Vec4i> right_line = makePoints(img, right_fit_average[0], right_fit_average[1]);
     vector<vector<Vec4i>> lines_to_draw = {left_line, right_line};
@@ -617,7 +725,8 @@ void DisplayLine(Mat *img_dst, vector<vector<Vec4i>> lines)
         for (int j = 0; j < lines[i].size(); j++)
         {
             Vec4i l = lines[i][j];
-            line(*img_dst, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255), 3, LINE_AA);
+            printf("x1: %d, y1: %d, x2: %d, y2: %d\n", l[0], l[1], l[2], l[3]);
+            line(*img_dst, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255), 3);
         }
     }
 }
@@ -660,7 +769,7 @@ void LaneDetectHough(Mat &frame_src, Mat &frame_dst, vector<Vec4i> &lines)
 
     vector<vector<Vec4i>> avg_lines = AverageSlopeIntercept(frame_src, lines);
 
-    DisplayLine(&frame_src, avg_lines);
+    // DisplayLine(&frame_src, avg_lines);
 
     // Create a copy of the source frame for drawing the detected lines
     frame_dst = frame_src.clone();
