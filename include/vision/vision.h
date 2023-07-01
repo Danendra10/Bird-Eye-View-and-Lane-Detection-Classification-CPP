@@ -561,35 +561,50 @@ std::vector<Vec4i> makePoints(Mat img, float slope, float intercept)
 }
 
 // average slope intercept
-vector<vector<Vec4i>> AverageSlopeIntercept(Mat img, std::vector<Vec4i> &lines)
+vector<vector<Vec4i>> AverageSlopeIntercept(Mat img, vector<Vec4i> &lines)
 {
-    std::vector<Vec2f> left_fit, right_fit;
+    vector<Vec2f> left_fit, right_fit;
 
-    // use polyfit to fit a line to the points
+    // Use polyfit to fit a line to the points
     VectorXd x(lines.size());
     VectorXd y(lines.size());
 
     for (int i = 0; i < lines.size(); i++)
     {
-        x(i) = lines[i][0];
-        y(i) = lines[i][1];
+        Vec4i line = lines[i];
+        int x1 = line[0];
+        int y1 = line[1];
+        int x2 = line[2];
+        int y2 = line[3];
+
+        VectorXd xs(2);
+        xs << x1, x2;
+
+        VectorXd ys(2);
+        ys << y1, y2;
+
+        VectorXd coeffs = polyfit(xs, ys, 1);
+
+        float slope = coeffs[0];
+        float intercept = coeffs[1];
+
+        if (slope < 0)
+            left_fit.push_back(Vec2f(slope, intercept));
+        else
+            right_fit.push_back(Vec2f(slope, intercept));
     }
 
-    VectorXd coeffs = polyfit(x, y, 1);
-
-    cout << "coeffs: " << coeffs << endl;
-    float slope = coeffs[0];
-    float intercept = coeffs[1];
-    Vec2f left_fit_average = Vec2f(0, 0);
-    Vec2f right_fit_average = Vec2f(0, 0);
+    Vec2f left_fit_average(0, 0);
+    Vec2f right_fit_average(0, 0);
     if (!left_fit.empty())
-        left_fit_average = std::accumulate(left_fit.begin(), left_fit.end(), Vec2f(0, 0)) / static_cast<float>(left_fit.size());
+        left_fit_average = accumulate(left_fit.begin(), left_fit.end(), Vec2f(0, 0)) / static_cast<float>(left_fit.size());
     if (!right_fit.empty())
-        right_fit_average = std::accumulate(right_fit.begin(), right_fit.end(), Vec2f(0, 0)) / static_cast<float>(right_fit.size());
+        right_fit_average = accumulate(right_fit.begin(), right_fit.end(), Vec2f(0, 0)) / static_cast<float>(right_fit.size());
 
     vector<Vec4i> left_line = makePoints(img, left_fit_average[0], left_fit_average[1]);
     vector<Vec4i> right_line = makePoints(img, right_fit_average[0], right_fit_average[1]);
     vector<vector<Vec4i>> lines_to_draw = {left_line, right_line};
+
     return lines_to_draw;
 }
 
@@ -618,7 +633,7 @@ void LaneDetectHough(Mat &frame_src, Mat &frame_dst, vector<Vec4i> &lines)
     imshow("blurred", blurred);
 
     Mat edges;
-    Canny(blurred, edges, 10, 100);
+    Canny(blurred, edges, 50, 150);
 
     // Create a mask to exclude specific regions
     Mat mask = Mat::zeros(edges.size(), CV_8UC1);
@@ -639,7 +654,7 @@ void LaneDetectHough(Mat &frame_src, Mat &frame_dst, vector<Vec4i> &lines)
 
     imshow("edges", edges);
 
-    HoughLinesP(edges, lines, 1, CV_PI / 180, 5, 5, 5);
+    HoughLinesP(edges, lines, 1, CV_PI / 180, 10, 10, 10);
 
     vector<vector<Vec4i>> avg_lines = AverageSlopeIntercept(frame_src, lines);
 

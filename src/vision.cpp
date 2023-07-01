@@ -67,6 +67,12 @@ int main()
 
         vector<Vec4i> lines;
         LaneDetectHough(line_bgr, line_bgr, lines);
+
+        for (size_t i = 0; i < lines.size(); i++)
+        {
+            Vec4i l = lines[i];
+            line(line_bgr, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 255, 255), 3, LINE_AA);
+        }
         imshow("Remapped", line_bgr);
 
         char c = (char)waitKey(25);
