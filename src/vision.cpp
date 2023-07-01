@@ -40,7 +40,7 @@ int main()
         InversePerspective(DST_REMAPPED_WIDTH, DST_REMAPPED_HEIGHT, frame_gray_resize.data, maptable, frame_remapped.data);
         line(raw_frame, Point(cam_params.image_width >> 1, 0), Point(cam_params.image_width >> 1, cam_params.image_height), Scalar(0, 0, 255), 1);
         line(raw_frame, Point(0, cam_params.image_height >> 1), Point(cam_params.image_width, cam_params.image_height >> 1), Scalar(0, 0, 255), 1);
-        vector<vector<Point>> lines;
+        // vector<vector<Point>> lines;
 
         Mat line_bgr;
         cvtColor(frame_remapped, line_bgr, COLOR_GRAY2BGR);
@@ -52,17 +52,64 @@ int main()
         erode(line_hls, line_hls, Mat(), Point(-1, -1), 2);
         // ScanLines(lines, line_hls);
 
-        LaneDetect(line_hls, line_bgr, Lanes);
-        ClassifyLane(Lanes);
+        // LaneDetect(line_hls, line_bgr, Lanes);
+        // // ClassifyLane(Lanes);
 
+        // vector<Point> poly_points;
         // for (int i = 0; i < Lanes.size(); i++)
         // {
-        //     circle(line_bgr, Lanes[i].lane_point, 3, Scalar(0, 0, 255), -1);
+        //     poly_points.push_back(Lanes[i].lane_point);
         // }
-        circle(line_bgr, Point(581, 584), 3, Scalar(0, 0, 255), -1);
-        circle(line_bgr, Point(582, 378), 3, Scalar(0, 255, 255), -1);
-        imshow("Remapped", line_bgr);
+
+        // fillPoly(line_bgr, poly_points, Scalar(0, 255, 0));
+        // imshow("Remapped", line_bgr);
         // imshow("HLS", line_hls);
+
+        vector<Vec4i> lines;
+        LaneDetectHough(line_bgr, line_bgr, lines);
+
+        // draw the lines
+        for (size_t i = 0; i < lines.size(); i++)
+        {
+            // Extract the line endpoints
+            Vec4i l = lines[i];
+            Point pt1(l[0], l[1]);
+            Point pt2(l[2], l[3]);
+
+            // Check if the line endpoints fall within the specified regions to ignore
+            // Check if the line endpoints fall within the specified regions to ignore
+            if ((pt1.x >= 4 && pt1.x <= 296 && pt1.y >= 440 && pt1.y <= 795) ||
+                (pt2.x >= 4 && pt2.x <= 296 && pt2.y >= 440 && pt2.y <= 795) ||
+                (pt1.x == 0 && pt1.y == 800) || (pt2.x == 0 && pt2.y == 800))
+            {
+                continue; // Ignore this line
+            }
+            if ((pt1.x == 795 && pt1.y == 442) || (pt2.x == 795 && pt2.y == 442))
+            {
+                // Handle (795, 442) separately
+                // ... Add your custom logic for this case ...
+                continue; // Ignore this line
+            }
+            if ((pt1.x == 506 && pt1.y == 795) || (pt2.x == 506 && pt2.y == 795))
+            {
+                // Handle (506, 795) separately
+                // ... Add your custom logic for this case ...
+                continue; // Ignore this line
+            }
+            if ((pt1.x == 800 && pt1.y == 800) || (pt2.x == 800 && pt2.y == 800))
+            {
+                // Handle (800, 800) separately
+                // ... Add your custom logic for this case ...
+                continue; // Ignore this line
+            }
+
+            line(line_bgr, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255), 1, LINE_AA);
+        }
+
+        // click event put text to line_bgr
+
+        imshow("Remapped", line_bgr);
+        setMouseCallback("Remapped", CallBackFunc, NULL);
 
         char c = (char)waitKey(25);
         if (c == 27)

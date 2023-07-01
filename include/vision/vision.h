@@ -268,31 +268,97 @@ void LaneDetect(Mat &frame_src, Mat &frame_dst, vector<LaneStruct> &lanes)
     }
 }
 
+bool DetectPointIsCloseToAnotherPoint(Point &point_1, Point &point_2, float threshold)
+{
+    float distance = sqrt(pow(point_1.x - point_2.x, 2) + pow(point_1.y - point_2.y, 2));
+    if (distance < threshold)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void FillPolyFromPoints(Mat &frame, vector<LaneStruct> &points)
+{
+    vector<Point> poly_points;
+    for (int i = 0; i < points.size(); i++)
+    {
+        poly_points.push_back(points[i].lane_point);
+    }
+    fillConvexPoly(frame, poly_points, Scalar(255, 255, 255));
+}
+
+void FillPolyFromMatrix(Mat &frame_in, Mat &frame_out)
+{
+    vector<vector<Point>> contours;
+    vector<Vec4i> hierarchy;
+    findContours(frame_in, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
+    drawContours(frame_out, contours, -1, Scalar(255, 255, 255), FILLED, 8, hierarchy);
+}
+
 void ClassifyLane(vector<LaneStruct> &lanes)
 {
-    LaneClass lane_class = LEFT_LANE;
+    static LaneClass lane_class = LEFT_LANE;
+    static LaneClass prev_lane_class = MIDDLE_LANE;
 
     float dist_to_left_lane = FLT_MAX;
     float dist_to_middle_lane = FLT_MAX;
     float dist_to_right_lane = FLT_MAX;
+    static uint8_t state_change_lane = 0;
 
     if (lanes.empty())
     {
         cout << "No lanes detected." << endl;
         return;
     }
-    ofstream myfile;
-    myfile.open("../lane.txt");
-    for (int i = 0; i < lanes.size(); i++)
+    // ofstream myfile;
+    // myfile.open("../lane.txt");
+    lanes[0].classified_as = lane_class;
+    for (int i = 1; i < lanes.size(); i++)
     {
-        float slope = (lanes[i].lane_point.y - lanes[i - 1].lane_point.y) / (lanes[i].lane_point.x - lanes[i - 1].lane_point.x);
-        float distance = sqrt(pow(lanes[i].lane_point.x - lanes[i - 1].lane_point.x, 2) + pow(lanes[i].lane_point.y - lanes[i - 1].lane_point.y, 2));
+        bool is_close_to_another_point = DetectPointIsCloseToAnotherPoint(lanes[i].lane_point, lanes[i - 1].lane_point, 10);
+        printf("is_close_to_another_point: %d\n", is_close_to_another_point);
+        if (is_close_to_another_point)
+        {
+            lanes[i].classified_as = lanes[i - 1].classified_as;
+        }
+        else
+        {
+            lanes[i].classified_as = MIDDLE_LANE;
+        }
+        // float slope = (lanes[i].lane_point.y - lanes[i - 1].lane_point.y) / (lanes[i].lane_point.x - lanes[i - 1].lane_point.x);
+        // float distance = sqrt(pow(lanes[i].lane_point.x - lanes[i - 1].lane_point.x, 2) + pow(lanes[i].lane_point.y - lanes[i - 1].lane_point.y, 2));
 
-        myfile << "slope: " << slope << " distance: " << distance << " X: " << lanes[i].lane_point.x << " Y: " << lanes[i].lane_point.y << " X prev: " << lanes[i - 1].lane_point.x << " Y prev: " << lanes[i - 1].lane_point.y << endl;
+        // // myfile << "slope: " << slope << " distance: " << distance << " X: " << lanes[i].lane_point.x << " Y: " << lanes[i].lane_point.y << " X prev: " << lanes[i - 1].lane_point.x << " Y prev: " << lanes[i - 1].lane_point.y << endl;
 
-        printf("slope: %f distance: %f X: %d Y: %d X prev: %d Y prev: %d\n", slope, distance, lanes[i].lane_point.x, lanes[i].lane_point.y, lanes[i - 1].lane_point.x, lanes[i - 1].lane_point.y);
+        // if (slope < -100 && distance > 120)
+        // {
+        //     state_change_lane = 1;
+        // }
+
+        // if (state_change_lane && lane_class == LEFT_LANE && prev_lane_class != LEFT_LANE)
+        // {
+        //     lane_class = MIDDLE_LANE;
+        //     prev_lane_class = LEFT_LANE;
+        //     state_change_lane = 0;
+        // }
+
+        // if (state_change_lane && lane_class == MIDDLE_LANE && prev_lane_class != MIDDLE_LANE)
+        // {
+        //     lane_class = LEFT_LANE;
+        //     prev_lane_class = MIDDLE_LANE;
+        //     state_change_lane = 0;
+        // }
+        // printf("State %d lane class %d\n", state_change_lane, lane_class);
+
+        // lanes[i].classified_as = lane_class;
+
+        // printf("slope: %f distance: %f X: %d Y: %d X prev: %d Y prev: %d\n", slope, distance, lanes[i].lane_point.x, lanes[i].lane_point.y, lanes[i - 1].lane_point.x, lanes[i - 1].lane_point.y);
     }
-    myfile.close();
+    // myfile.close();
 }
 
 void LaneDetect2(Mat &frame_src, Mat &frame_dst, vector<LaneStruct> &lanes)
@@ -462,3 +528,54 @@ void LaneDetect2(Mat &frame_src, Mat &frame_dst, vector<LaneStruct> &lanes)
 //         current_lane_points.clear();
 //     }
 // }
+
+void LaneDetectHough(Mat &frame_src, Mat &frame_dst, vector<Vec4i> &lines)
+{
+    // Convert the image to grayscale
+    Mat gray;
+    cvtColor(frame_src, gray, COLOR_BGR2GRAY);
+
+    // Apply Gaussian blur to reduce noise
+    Mat blurred;
+    GaussianBlur(gray, blurred, Size(5, 5), 0);
+
+    imshow("blurred", blurred);
+
+    Mat edges;
+    Canny(blurred, edges, 50, 150);
+
+    // Create a mask to exclude specific regions
+    Mat mask = Mat::zeros(edges.size(), CV_8UC1);
+
+    // Define the regions to ignore
+    Point region1[] = {Point(4, 440), Point(296, 795), Point(0, 800)};
+    Point region2[] = {Point(795, 442), Point(506, 795), Point(800, 800)};
+
+    // Draw the ignored regions as white on the mask
+    fillConvexPoly(mask, region1, 3, Scalar(255));
+    fillConvexPoly(mask, region2, 3, Scalar(255));
+
+    // Ignore rows 750-800
+    Rect ignoreRegion(0, 750, mask.cols, 50);
+    mask(ignoreRegion) = 255;
+    // Apply the mask to the edges image
+    edges.setTo(0, mask);
+
+    imshow("edges", edges);
+
+    HoughLinesP(edges, lines, 1, CV_PI / 180, 10, 10, 10);
+
+    // Create a copy of the source frame for drawing the detected lines
+    frame_dst = frame_src.clone();
+}
+
+void CallBackFunc(int event, int x, int y, int flags, void *userdata)
+{
+    if (event == EVENT_LBUTTONDOWN)
+    {
+        printf("Left button of the mouse is clicked - position (%d, %d)\n", x, y);
+        Point *p = (Point *)userdata;
+        p->x = x;
+        p->y = y;
+    }
+}
