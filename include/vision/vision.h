@@ -110,7 +110,7 @@ vector<double> PolynomialRegression::getW()
 
 PolynomialRegression polynom(DEGREE);
 
-string video_path = "../test2.mp4";
+string video_path = "../test.mp4";
 
 int *maptable = new int[SRC_RESIZED_WIDTH * SRC_RESIZED_HEIGHT];
 
@@ -633,14 +633,17 @@ VectorXd polyfit(const VectorXd &x, const VectorXd &y, int degree)
     return coeffs;
 }
 
-std::vector<Vec4i> makePoints(Mat img, float slope, float intercept)
+std::vector<Vec4i> makePoints(Mat img, float intercept, float slope)
 {
+    std::vector<Vec4i> points;
     int y1 = img.rows;
-    int y2 = static_cast<int>(y1 * 3 / 5);
-    int x1 = static_cast<int>((y1 - intercept) / slope);
-    int x2 = static_cast<int>((y2 - intercept) / slope);
-    // printf("x1: %d, y1: %d, x2: %d, y2: %d\n", x1, y1, x2, y2);
-    return {Vec4i(x1, y1, x2, y2)};
+    int y2 = y1 * (2.0 / 5.0);
+    printf("intercept: %f\n", intercept);
+    printf("slope: %f\n", slope);
+    int x1 = (y1 - intercept) / slope;
+    int x2 = (y2 - intercept) / slope;
+    points.push_back(Vec4i(x1, y1, x2, y2));
+    return points;
 }
 
 Vec2f VectorAvg(vector<Vec2f> in_vec)
@@ -670,19 +673,15 @@ vector<vector<Vec4i>> AverageSlopeIntercept(Mat img, vector<Vec4i> &lines)
         double x2 = line[2];
         double y2 = line[3];
 
-        printf("x1: %f, y1: %f, x2: %f, y2: %f\n", x1, y1, x2, y2);
-
         // poly fit
         nc::NdArray<double> x = nc::NdArray<double>({x1, x2}).reshape({2, 1});
         nc::NdArray<double> y = nc::NdArray<double>({y1, y2}).reshape({2, 1});
 
-        printf("x: %f, %f\n", x[0], x[1]);
-        printf("y: %f, %f\n", y[0], y[1]);
-
-        static nc::polynomial::Poly1d<double> poly = nc::polynomial::Poly1d<double>::fit(x, y, 1);
+        nc::polynomial::Poly1d<double> poly = nc::polynomial::Poly1d<double>::fit(x, y, 1);
         nc::NdArray<double> coefficients = poly.coefficients();
 
-        printf("Coeffs: %f, %f\n", coefficients[0], coefficients[1]);
+        float slope = coefficients[0];
+        float intercept = coefficients[1];
 
         // VectorXd xs(2);
         // xs << x1, x2;
@@ -695,23 +694,25 @@ vector<vector<Vec4i>> AverageSlopeIntercept(Mat img, vector<Vec4i> &lines)
         // float slope = coeffs[0];
         // float intercept = coeffs[1];
 
-        // printf("Slope %f Interception %f\n", slope, intercept);
+        printf("Slope %f Interception %f\n", slope, intercept);
 
-        // if (slope < 0)
-        //     left_fit.push_back(Vec2f(slope, intercept));
-        // else
-        //     right_fit.push_back(Vec2f(slope, intercept));
+        if (slope < 0)
+            left_fit.push_back(Vec2f(slope, intercept));
+        else
+            right_fit.push_back(Vec2f(slope, intercept));
     }
 
     Vec2f left_fit_average = VectorAvg(left_fit);
     Vec2f right_fit_average = VectorAvg(right_fit);
 
-    // if (!left_fit.empty())
-    //     left_fit_average = std::accumulate(left_fit.begin(), left_fit.end(), Vec2f(0, 0)) / static_cast<float>(left_fit.size());
-    // if (!right_fit.empty())
-    //     right_fit_average = std::accumulate(right_fit.begin(), right_fit.end(), Vec2f(0, 0)) / static_cast<float>(right_fit.size());
+    if (!left_fit.empty())
+        left_fit_average = std::accumulate(left_fit.begin(), left_fit.end(), Vec2f(0, 0)) / static_cast<float>(left_fit.size());
+    if (!right_fit.empty())
+        right_fit_average = std::accumulate(right_fit.begin(), right_fit.end(), Vec2f(0, 0)) / static_cast<float>(right_fit.size());
     vector<Vec4i> left_line = makePoints(img, left_fit_average[0], left_fit_average[1]);
+
     vector<Vec4i> right_line = makePoints(img, right_fit_average[0], right_fit_average[1]);
+
     vector<vector<Vec4i>> lines_to_draw = {left_line, right_line};
 
     return lines_to_draw;
@@ -724,7 +725,6 @@ void DisplayLine(Mat *img_dst, vector<vector<Vec4i>> lines)
         for (int j = 0; j < lines[i].size(); j++)
         {
             Vec4i l = lines[i][j];
-            printf("x1: %d, y1: %d, x2: %d, y2: %d\n", l[0], l[1], l[2], l[3]);
             line(*img_dst, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255), 3);
         }
     }
@@ -768,7 +768,7 @@ void LaneDetectHough(Mat &frame_src, Mat &frame_dst, vector<Vec4i> &lines)
 
     vector<vector<Vec4i>> avg_lines = AverageSlopeIntercept(frame_src, lines);
 
-    // DisplayLine(&frame_src, avg_lines);
+    DisplayLine(&frame_src, avg_lines);
 
     // Create a copy of the source frame for drawing the detected lines
     frame_dst = frame_src.clone();
@@ -779,8 +779,8 @@ void CallBackFunc(int event, int x, int y, int flags, void *userdata)
     if (event == EVENT_LBUTTONDOWN)
     {
         printf("Left button of the mouse is clicked - position (%d, %d)\n", x, y);
-        Point *p = (Point *)userdata;
-        p->x = x;
-        p->y = y;
+        // Point *p = (Point *)userdata;
+        // p->x = x;
+        // p->y = y;
     }
 }
