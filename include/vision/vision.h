@@ -679,11 +679,13 @@ vector<vector<Vec4i>> AverageSlopeIntercept(Mat img, vector<Vec4i> &lines)
         nc::NdArray<int> x = {x1, x2};
         nc::NdArray<int> y = {y1, y2};
 
-        // nc::NdArray<double> coeffs = nc::polynomial::polyfit(x, y, 1);
+        printf("x: %d, %d\n", x[0], x[1]);
+        printf("y: %d, %d\n", y[0], y[1]);
+
         static nc::polynomial::Poly1d<double> poly = nc::polynomial::Poly1d<int>::fit(x, y, 1);
         // get the coefficients
-        nc::NdArray<double> coeffs = poly.coefficients();
-        printf("Coeffs: %f, %f\n", coeffs[0], coeffs[1]);
+        // nc::NdArray<double> coeffs = poly.coefficients();
+        // printf("Coeffs: %f, %f\n", coeffs[0], coeffs[1]);
 
         // VectorXd xs(2);
         // xs << x1, x2;
