@@ -662,30 +662,27 @@ vector<vector<Vec4i>> AverageSlopeIntercept(Mat img, vector<Vec4i> &lines)
 {
     vector<Vec2f> left_fit, right_fit;
 
-    // Use polyfit to fit a line to the points
-    VectorXd x(lines.size());
-    VectorXd y(lines.size());
     for (int i = lines.size(); i > 0; i--)
     {
         Vec4i line = lines[i];
-        int x1 = line[0];
-        int y1 = line[1];
-        int x2 = line[2];
-        int y2 = line[3];
+        double x1 = line[0];
+        double y1 = line[1];
+        double x2 = line[2];
+        double y2 = line[3];
 
-        printf("x1: %d, y1: %d, x2: %d, y2: %d\n", x1, y1, x2, y2);
+        printf("x1: %f, y1: %f, x2: %f, y2: %f\n", x1, y1, x2, y2);
 
         // poly fit
-        nc::NdArray<int> x = {x1, x2};
-        nc::NdArray<int> y = {y1, y2};
+        nc::NdArray<double> x = nc::NdArray<double>({x1, x2}).reshape({2, 1});
+        nc::NdArray<double> y = nc::NdArray<double>({y1, y2}).reshape({2, 1});
 
-        printf("x: %d, %d\n", x[0], x[1]);
-        printf("y: %d, %d\n", y[0], y[1]);
+        printf("x: %f, %f\n", x[0], x[1]);
+        printf("y: %f, %f\n", y[0], y[1]);
 
-        static nc::polynomial::Poly1d<double> poly = nc::polynomial::Poly1d<int>::fit(x, y, 1);
-        // get the coefficients
-        // nc::NdArray<double> coeffs = poly.coefficients();
-        // printf("Coeffs: %f, %f\n", coeffs[0], coeffs[1]);
+        static nc::polynomial::Poly1d<double> poly = nc::polynomial::Poly1d<double>::fit(x, y, 1);
+        nc::NdArray<double> coefficients = poly.coefficients();
+
+        printf("Coeffs: %f, %f\n", coefficients[0], coefficients[1]);
 
         // VectorXd xs(2);
         // xs << x1, x2;
