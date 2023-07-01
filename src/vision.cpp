@@ -52,16 +52,15 @@ int main()
         erode(line_hls, line_hls, Mat(), Point(-1, -1), 2);
         // ScanLines(lines, line_hls);
 
-        LaneDetect(line_hls, frame_remapped, lines);
+        LaneDetect(line_hls, line_bgr, Lanes);
+        ClassifyLane(Lanes);
 
-        for (int i = 0; i < lines.size(); i++)
+        for (int i = 0; i < Lanes.size(); i++)
         {
-            circle(line_bgr, lines[i][LEFT_LANE], 1, Scalar(0, 0, 255), 1);
-            circle(line_bgr, lines[i][MIDDLE_LANE], 1, Scalar(0, 255, 0), -1);
-            circle(line_bgr, lines[i][RIGHT_LANE], 1, Scalar(0, 255, 0), -1);
+            circle(line_bgr, Lanes[i].lane_point, 3, Scalar(0, 0, 255), -1);
         }
         imshow("Remapped", line_bgr);
-        imshow("HLS", line_hls);
+        // imshow("HLS", line_hls);
 
         char c = (char)waitKey(25);
         if (c == 27)
