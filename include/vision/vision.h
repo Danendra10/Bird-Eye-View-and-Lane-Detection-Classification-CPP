@@ -577,6 +577,8 @@ vector<vector<Vec4i>> AverageSlopeIntercept(Mat img, vector<Vec4i> &lines)
         int x2 = line[2];
         int y2 = line[3];
 
+        printf("x1: %d, y1: %d, x2: %d, y2: %d\n", x1, y1, x2, y2);
+
         VectorXd xs(2);
         xs << x1, x2;
 
@@ -597,9 +599,9 @@ vector<vector<Vec4i>> AverageSlopeIntercept(Mat img, vector<Vec4i> &lines)
     Vec2f left_fit_average(0, 0);
     Vec2f right_fit_average(0, 0);
     if (!left_fit.empty())
-        left_fit_average = accumulate(left_fit.begin(), left_fit.end(), Vec2f(0, 0)) / static_cast<float>(left_fit.size());
+        left_fit_average = std::accumulate(left_fit.begin(), left_fit.end(), Vec2f(0, 0)) / static_cast<float>(left_fit.size());
     if (!right_fit.empty())
-        right_fit_average = accumulate(right_fit.begin(), right_fit.end(), Vec2f(0, 0)) / static_cast<float>(right_fit.size());
+        right_fit_average = std::accumulate(right_fit.begin(), right_fit.end(), Vec2f(0, 0)) / static_cast<float>(right_fit.size());
 
     vector<Vec4i> left_line = makePoints(img, left_fit_average[0], left_fit_average[1]);
     vector<Vec4i> right_line = makePoints(img, right_fit_average[0], right_fit_average[1]);
