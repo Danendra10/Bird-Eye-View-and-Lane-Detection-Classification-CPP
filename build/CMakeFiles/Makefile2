@@ -64,6 +64,8 @@ CMAKE_BINARY_DIR = /Users/danendracleveroananda/Documents/Projects/Robot/Researc
 
 # The main recursive "all" target.
 all: CMakeFiles/IRCAR-VISION_node.dir/all
+all: CMakeFiles/get_image.dir/all
+all: CMakeFiles/dummy.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -72,6 +74,8 @@ preinstall:
 
 # The main recursive "clean" target.
 clean: CMakeFiles/IRCAR-VISION_node.dir/clean
+clean: CMakeFiles/get_image.dir/clean
+clean: CMakeFiles/dummy.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -99,6 +103,58 @@ IRCAR-VISION_node: CMakeFiles/IRCAR-VISION_node.dir/rule
 CMakeFiles/IRCAR-VISION_node.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRCAR-VISION_node.dir/build.make CMakeFiles/IRCAR-VISION_node.dir/clean
 .PHONY : CMakeFiles/IRCAR-VISION_node.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/get_image.dir
+
+# All Build rule for target.
+CMakeFiles/get_image.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/get_image.dir/build.make CMakeFiles/get_image.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/get_image.dir/build.make CMakeFiles/get_image.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/build/CMakeFiles --progress-num=5,6 "Built target get_image"
+.PHONY : CMakeFiles/get_image.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/get_image.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/get_image.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/build/CMakeFiles 0
+.PHONY : CMakeFiles/get_image.dir/rule
+
+# Convenience name for target.
+get_image: CMakeFiles/get_image.dir/rule
+.PHONY : get_image
+
+# clean rule for target.
+CMakeFiles/get_image.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/get_image.dir/build.make CMakeFiles/get_image.dir/clean
+.PHONY : CMakeFiles/get_image.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/dummy.dir
+
+# All Build rule for target.
+CMakeFiles/dummy.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dummy.dir/build.make CMakeFiles/dummy.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dummy.dir/build.make CMakeFiles/dummy.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/build/CMakeFiles --progress-num=3,4 "Built target dummy"
+.PHONY : CMakeFiles/dummy.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/dummy.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/dummy.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/build/CMakeFiles 0
+.PHONY : CMakeFiles/dummy.dir/rule
+
+# Convenience name for target.
+dummy: CMakeFiles/dummy.dir/rule
+.PHONY : dummy
+
+# clean rule for target.
+CMakeFiles/dummy.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dummy.dir/build.make CMakeFiles/dummy.dir/clean
+.PHONY : CMakeFiles/dummy.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

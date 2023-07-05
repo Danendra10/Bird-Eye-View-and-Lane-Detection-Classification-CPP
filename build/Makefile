@@ -129,29 +129,103 @@ IRCAR-VISION_node/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRCAR-VISION_node.dir/build.make CMakeFiles/IRCAR-VISION_node.dir/build
 .PHONY : IRCAR-VISION_node/fast
 
-src/vision.o: src/vision.cpp.o
-.PHONY : src/vision.o
+#=============================================================================
+# Target rules for targets named get_image
+
+# Build rule for target.
+get_image: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 get_image
+.PHONY : get_image
+
+# fast build rule for target.
+get_image/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/get_image.dir/build.make CMakeFiles/get_image.dir/build
+.PHONY : get_image/fast
+
+#=============================================================================
+# Target rules for targets named dummy
+
+# Build rule for target.
+dummy: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dummy
+.PHONY : dummy
+
+# fast build rule for target.
+dummy/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dummy.dir/build.make CMakeFiles/dummy.dir/build
+.PHONY : dummy/fast
+
+src/dummy.o: src/dummy.cc.o
+.PHONY : src/dummy.o
 
 # target to build an object file
-src/vision.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRCAR-VISION_node.dir/build.make CMakeFiles/IRCAR-VISION_node.dir/src/vision.cpp.o
-.PHONY : src/vision.cpp.o
+src/dummy.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dummy.dir/build.make CMakeFiles/dummy.dir/src/dummy.cc.o
+.PHONY : src/dummy.cc.o
 
-src/vision.i: src/vision.cpp.i
-.PHONY : src/vision.i
+src/dummy.i: src/dummy.cc.i
+.PHONY : src/dummy.i
 
 # target to preprocess a source file
-src/vision.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRCAR-VISION_node.dir/build.make CMakeFiles/IRCAR-VISION_node.dir/src/vision.cpp.i
-.PHONY : src/vision.cpp.i
+src/dummy.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dummy.dir/build.make CMakeFiles/dummy.dir/src/dummy.cc.i
+.PHONY : src/dummy.cc.i
 
-src/vision.s: src/vision.cpp.s
-.PHONY : src/vision.s
+src/dummy.s: src/dummy.cc.s
+.PHONY : src/dummy.s
 
 # target to generate assembly for a file
-src/vision.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRCAR-VISION_node.dir/build.make CMakeFiles/IRCAR-VISION_node.dir/src/vision.cpp.s
-.PHONY : src/vision.cpp.s
+src/dummy.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dummy.dir/build.make CMakeFiles/dummy.dir/src/dummy.cc.s
+.PHONY : src/dummy.cc.s
+
+src/get_image.o: src/get_image.cc.o
+.PHONY : src/get_image.o
+
+# target to build an object file
+src/get_image.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/get_image.dir/build.make CMakeFiles/get_image.dir/src/get_image.cc.o
+.PHONY : src/get_image.cc.o
+
+src/get_image.i: src/get_image.cc.i
+.PHONY : src/get_image.i
+
+# target to preprocess a source file
+src/get_image.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/get_image.dir/build.make CMakeFiles/get_image.dir/src/get_image.cc.i
+.PHONY : src/get_image.cc.i
+
+src/get_image.s: src/get_image.cc.s
+.PHONY : src/get_image.s
+
+# target to generate assembly for a file
+src/get_image.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/get_image.dir/build.make CMakeFiles/get_image.dir/src/get_image.cc.s
+.PHONY : src/get_image.cc.s
+
+src/road_sign_detector.o: src/road_sign_detector.cc.o
+.PHONY : src/road_sign_detector.o
+
+# target to build an object file
+src/road_sign_detector.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRCAR-VISION_node.dir/build.make CMakeFiles/IRCAR-VISION_node.dir/src/road_sign_detector.cc.o
+.PHONY : src/road_sign_detector.cc.o
+
+src/road_sign_detector.i: src/road_sign_detector.cc.i
+.PHONY : src/road_sign_detector.i
+
+# target to preprocess a source file
+src/road_sign_detector.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRCAR-VISION_node.dir/build.make CMakeFiles/IRCAR-VISION_node.dir/src/road_sign_detector.cc.i
+.PHONY : src/road_sign_detector.cc.i
+
+src/road_sign_detector.s: src/road_sign_detector.cc.s
+.PHONY : src/road_sign_detector.s
+
+# target to generate assembly for a file
+src/road_sign_detector.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRCAR-VISION_node.dir/build.make CMakeFiles/IRCAR-VISION_node.dir/src/road_sign_detector.cc.s
+.PHONY : src/road_sign_detector.cc.s
 
 # Help Target
 help:
@@ -162,9 +236,17 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... IRCAR-VISION_node"
-	@echo "... src/vision.o"
-	@echo "... src/vision.i"
-	@echo "... src/vision.s"
+	@echo "... dummy"
+	@echo "... get_image"
+	@echo "... src/dummy.o"
+	@echo "... src/dummy.i"
+	@echo "... src/dummy.s"
+	@echo "... src/get_image.o"
+	@echo "... src/get_image.i"
+	@echo "... src/get_image.s"
+	@echo "... src/road_sign_detector.o"
+	@echo "... src/road_sign_detector.i"
+	@echo "... src/road_sign_detector.s"
 .PHONY : help
 
 

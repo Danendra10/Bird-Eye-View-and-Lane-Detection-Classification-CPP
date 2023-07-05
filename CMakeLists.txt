@@ -12,5 +12,12 @@ include_directories(
   ${NumCpp_INCLUDE_DIRS}
 )
 
-add_executable(${PROJECT_NAME}_node src/vision.cpp)
+add_executable(${PROJECT_NAME}_node src/road_sign_detector.cc)
 target_link_libraries(${PROJECT_NAME}_node ${OpenCV_LIBRARIES} ${EIGEN3_LIBRARIES} NumCpp::NumCpp)
+
+
+add_executable(get_image src/get_image.cc)
+target_link_libraries(get_image ${OpenCV_LIBRARIES} ${EIGEN3_LIBRARIES} NumCpp::NumCpp)
+
+add_executable(dummy src/dummy.cc)
+target_link_libraries(dummy ${OpenCV_LIBRARIES} ${EIGEN3_LIBRARIES} NumCpp::NumCpp)

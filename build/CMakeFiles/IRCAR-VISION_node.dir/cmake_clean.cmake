@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/IRCAR-VISION_node.dir/src/vision.cpp.o"
-  "CMakeFiles/IRCAR-VISION_node.dir/src/vision.cpp.o.d"
+  "CMakeFiles/IRCAR-VISION_node.dir/src/road_sign_detector.cc.o"
+  "CMakeFiles/IRCAR-VISION_node.dir/src/road_sign_detector.cc.o.d"
   "IRCAR-VISION_node"
   "IRCAR-VISION_node.pdb"
 )

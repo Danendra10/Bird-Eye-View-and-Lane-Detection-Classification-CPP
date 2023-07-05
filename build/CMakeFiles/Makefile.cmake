@@ -72,4 +72,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/IRCAR-VISION_node.dir/DependInfo.cmake"
+  "CMakeFiles/get_image.dir/DependInfo.cmake"
+  "CMakeFiles/dummy.dir/DependInfo.cmake"
   )
