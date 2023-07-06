@@ -155,6 +155,19 @@ dummy/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dummy.dir/build.make CMakeFiles/dummy.dir/build
 .PHONY : dummy/fast
 
+#=============================================================================
+# Target rules for targets named generate_aruco
+
+# Build rule for target.
+generate_aruco: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 generate_aruco
+.PHONY : generate_aruco
+
+# fast build rule for target.
+generate_aruco/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_aruco.dir/build.make CMakeFiles/generate_aruco.dir/build
+.PHONY : generate_aruco/fast
+
 src/dummy.o: src/dummy.cc.o
 .PHONY : src/dummy.o
 
@@ -178,6 +191,30 @@ src/dummy.s: src/dummy.cc.s
 src/dummy.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dummy.dir/build.make CMakeFiles/dummy.dir/src/dummy.cc.s
 .PHONY : src/dummy.cc.s
+
+src/generate_aruco.o: src/generate_aruco.cc.o
+.PHONY : src/generate_aruco.o
+
+# target to build an object file
+src/generate_aruco.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_aruco.dir/build.make CMakeFiles/generate_aruco.dir/src/generate_aruco.cc.o
+.PHONY : src/generate_aruco.cc.o
+
+src/generate_aruco.i: src/generate_aruco.cc.i
+.PHONY : src/generate_aruco.i
+
+# target to preprocess a source file
+src/generate_aruco.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_aruco.dir/build.make CMakeFiles/generate_aruco.dir/src/generate_aruco.cc.i
+.PHONY : src/generate_aruco.cc.i
+
+src/generate_aruco.s: src/generate_aruco.cc.s
+.PHONY : src/generate_aruco.s
+
+# target to generate assembly for a file
+src/generate_aruco.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_aruco.dir/build.make CMakeFiles/generate_aruco.dir/src/generate_aruco.cc.s
+.PHONY : src/generate_aruco.cc.s
 
 src/get_image.o: src/get_image.cc.o
 .PHONY : src/get_image.o
@@ -237,10 +274,14 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... IRCAR-VISION_node"
 	@echo "... dummy"
+	@echo "... generate_aruco"
 	@echo "... get_image"
 	@echo "... src/dummy.o"
 	@echo "... src/dummy.i"
 	@echo "... src/dummy.s"
+	@echo "... src/generate_aruco.o"
+	@echo "... src/generate_aruco.i"
+	@echo "... src/generate_aruco.s"
 	@echo "... src/get_image.o"
 	@echo "... src/get_image.i"
 	@echo "... src/get_image.s"

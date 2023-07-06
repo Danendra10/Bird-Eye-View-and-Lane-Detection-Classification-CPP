@@ -74,4 +74,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/IRCAR-VISION_node.dir/DependInfo.cmake"
   "CMakeFiles/get_image.dir/DependInfo.cmake"
   "CMakeFiles/dummy.dir/DependInfo.cmake"
+  "CMakeFiles/generate_aruco.dir/DependInfo.cmake"
   )

@@ -66,6 +66,7 @@ CMAKE_BINARY_DIR = /Users/danendracleveroananda/Documents/Projects/Robot/Researc
 all: CMakeFiles/IRCAR-VISION_node.dir/all
 all: CMakeFiles/get_image.dir/all
 all: CMakeFiles/dummy.dir/all
+all: CMakeFiles/generate_aruco.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -76,6 +77,7 @@ preinstall:
 clean: CMakeFiles/IRCAR-VISION_node.dir/clean
 clean: CMakeFiles/get_image.dir/clean
 clean: CMakeFiles/dummy.dir/clean
+clean: CMakeFiles/generate_aruco.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -111,7 +113,7 @@ CMakeFiles/IRCAR-VISION_node.dir/clean:
 CMakeFiles/get_image.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/get_image.dir/build.make CMakeFiles/get_image.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/get_image.dir/build.make CMakeFiles/get_image.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/build/CMakeFiles --progress-num=5,6 "Built target get_image"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/build/CMakeFiles --progress-num=7,8 "Built target get_image"
 .PHONY : CMakeFiles/get_image.dir/all
 
 # Build rule for subdir invocation for target.
@@ -155,6 +157,32 @@ dummy: CMakeFiles/dummy.dir/rule
 CMakeFiles/dummy.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dummy.dir/build.make CMakeFiles/dummy.dir/clean
 .PHONY : CMakeFiles/dummy.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/generate_aruco.dir
+
+# All Build rule for target.
+CMakeFiles/generate_aruco.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_aruco.dir/build.make CMakeFiles/generate_aruco.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_aruco.dir/build.make CMakeFiles/generate_aruco.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/build/CMakeFiles --progress-num=5,6 "Built target generate_aruco"
+.PHONY : CMakeFiles/generate_aruco.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/generate_aruco.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/generate_aruco.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danendracleveroananda/Documents/Projects/Robot/Research/ircar-vision/build/CMakeFiles 0
+.PHONY : CMakeFiles/generate_aruco.dir/rule
+
+# Convenience name for target.
+generate_aruco: CMakeFiles/generate_aruco.dir/rule
+.PHONY : generate_aruco
+
+# clean rule for target.
+CMakeFiles/generate_aruco.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_aruco.dir/build.make CMakeFiles/generate_aruco.dir/clean
+.PHONY : CMakeFiles/generate_aruco.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

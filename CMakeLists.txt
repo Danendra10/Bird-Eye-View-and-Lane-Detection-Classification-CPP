@@ -21,3 +21,6 @@ target_link_libraries(get_image ${OpenCV_LIBRARIES} ${EIGEN3_LIBRARIES} NumCpp::
 
 add_executable(dummy src/dummy.cc)
 target_link_libraries(dummy ${OpenCV_LIBRARIES} ${EIGEN3_LIBRARIES} NumCpp::NumCpp)
+
+add_executable(generate_aruco src/generate_aruco.cc)
+target_link_libraries(generate_aruco ${OpenCV_LIBRARIES} ${EIGEN3_LIBRARIES} NumCpp::NumCpp)
