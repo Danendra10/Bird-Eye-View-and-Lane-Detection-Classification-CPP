@@ -168,6 +168,19 @@ generate_aruco/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_aruco.dir/build.make CMakeFiles/generate_aruco.dir/build
 .PHONY : generate_aruco/fast
 
+#=============================================================================
+# Target rules for targets named lane_detect
+
+# Build rule for target.
+lane_detect: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 lane_detect
+.PHONY : lane_detect
+
+# fast build rule for target.
+lane_detect/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lane_detect.dir/build.make CMakeFiles/lane_detect.dir/build
+.PHONY : lane_detect/fast
+
 src/dummy.o: src/dummy.cc.o
 .PHONY : src/dummy.o
 
@@ -240,6 +253,30 @@ src/get_image.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/get_image.dir/build.make CMakeFiles/get_image.dir/src/get_image.cc.s
 .PHONY : src/get_image.cc.s
 
+src/lane_detect.o: src/lane_detect.cc.o
+.PHONY : src/lane_detect.o
+
+# target to build an object file
+src/lane_detect.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lane_detect.dir/build.make CMakeFiles/lane_detect.dir/src/lane_detect.cc.o
+.PHONY : src/lane_detect.cc.o
+
+src/lane_detect.i: src/lane_detect.cc.i
+.PHONY : src/lane_detect.i
+
+# target to preprocess a source file
+src/lane_detect.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lane_detect.dir/build.make CMakeFiles/lane_detect.dir/src/lane_detect.cc.i
+.PHONY : src/lane_detect.cc.i
+
+src/lane_detect.s: src/lane_detect.cc.s
+.PHONY : src/lane_detect.s
+
+# target to generate assembly for a file
+src/lane_detect.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lane_detect.dir/build.make CMakeFiles/lane_detect.dir/src/lane_detect.cc.s
+.PHONY : src/lane_detect.cc.s
+
 src/road_sign_detector.o: src/road_sign_detector.cc.o
 .PHONY : src/road_sign_detector.o
 
@@ -276,6 +313,7 @@ help:
 	@echo "... dummy"
 	@echo "... generate_aruco"
 	@echo "... get_image"
+	@echo "... lane_detect"
 	@echo "... src/dummy.o"
 	@echo "... src/dummy.i"
 	@echo "... src/dummy.s"
@@ -285,6 +323,9 @@ help:
 	@echo "... src/get_image.o"
 	@echo "... src/get_image.i"
 	@echo "... src/get_image.s"
+	@echo "... src/lane_detect.o"
+	@echo "... src/lane_detect.i"
+	@echo "... src/lane_detect.s"
 	@echo "... src/road_sign_detector.o"
 	@echo "... src/road_sign_detector.i"
 	@echo "... src/road_sign_detector.s"

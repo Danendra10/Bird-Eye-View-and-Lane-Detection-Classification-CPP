@@ -24,7 +24,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/Cellar/cmake/3.25.2/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
   "/opt/homebrew/Cellar/cmake/3.25.2/share/cmake/Modules/Compiler/Clang.cmake"
   "/opt/homebrew/Cellar/cmake/3.25.2/share/cmake/Modules/Compiler/GNU.cmake"
-  "/opt/homebrew/Cellar/cmake/3.25.2/share/cmake/Modules/FindBoost.cmake"
   "/opt/homebrew/Cellar/cmake/3.25.2/share/cmake/Modules/FindPackageHandleStandardArgs.cmake"
   "/opt/homebrew/Cellar/cmake/3.25.2/share/cmake/Modules/FindPackageMessage.cmake"
   "/opt/homebrew/Cellar/cmake/3.25.2/share/cmake/Modules/Platform/Apple-AppleClang-C.cmake"
@@ -35,17 +34,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/Cellar/cmake/3.25.2/share/cmake/Modules/Platform/Darwin-Initialize.cmake"
   "/opt/homebrew/Cellar/cmake/3.25.2/share/cmake/Modules/Platform/Darwin.cmake"
   "/opt/homebrew/Cellar/cmake/3.25.2/share/cmake/Modules/Platform/UnixPaths.cmake"
-  "/opt/homebrew/lib/cmake/Boost-1.82.0/BoostConfig.cmake"
-  "/opt/homebrew/lib/cmake/Boost-1.82.0/BoostConfigVersion.cmake"
-  "/opt/homebrew/lib/cmake/BoostDetectToolset-1.82.0.cmake"
-  "/opt/homebrew/lib/cmake/boost_date_time-1.82.0/boost_date_time-config-version.cmake"
-  "/opt/homebrew/lib/cmake/boost_date_time-1.82.0/boost_date_time-config.cmake"
-  "/opt/homebrew/lib/cmake/boost_date_time-1.82.0/libboost_date_time-variant-mt-shared.cmake"
-  "/opt/homebrew/lib/cmake/boost_date_time-1.82.0/libboost_date_time-variant-mt-static.cmake"
-  "/opt/homebrew/lib/cmake/boost_date_time-1.82.0/libboost_date_time-variant-shared.cmake"
-  "/opt/homebrew/lib/cmake/boost_date_time-1.82.0/libboost_date_time-variant-static.cmake"
-  "/opt/homebrew/lib/cmake/boost_headers-1.82.0/boost_headers-config-version.cmake"
-  "/opt/homebrew/lib/cmake/boost_headers-1.82.0/boost_headers-config.cmake"
   "/opt/homebrew/lib/cmake/opencv4/OpenCVConfig-version.cmake"
   "/opt/homebrew/lib/cmake/opencv4/OpenCVConfig.cmake"
   "/opt/homebrew/lib/cmake/opencv4/OpenCVModules-release.cmake"
@@ -53,9 +41,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/share/eigen3/cmake/Eigen3Config.cmake"
   "/opt/homebrew/share/eigen3/cmake/Eigen3ConfigVersion.cmake"
   "/opt/homebrew/share/eigen3/cmake/Eigen3Targets.cmake"
-  "/usr/local/share/NumCpp/cmake/NumCppConfig.cmake"
-  "/usr/local/share/NumCpp/cmake/NumCppConfigVersion.cmake"
-  "/usr/local/share/NumCpp/cmake/NumCppTargets.cmake"
   )
 
 # The corresponding makefile is:
@@ -75,4 +60,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/get_image.dir/DependInfo.cmake"
   "CMakeFiles/dummy.dir/DependInfo.cmake"
   "CMakeFiles/generate_aruco.dir/DependInfo.cmake"
+  "CMakeFiles/lane_detect.dir/DependInfo.cmake"
   )
